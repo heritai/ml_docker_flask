@@ -1,4 +1,4 @@
-# flask-paq-app: A Dockerized Flask API for Machine Learning
+# A Dockerized Flask API for Machine Learning
 
 This repository contains a simple Flask API that leverages the "paq" Python package (a toy ML package) for performing basic classification and regression tasks. The application is containerized using Docker for easy deployment and reproducibility.
 
