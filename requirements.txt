@@ -1,0 +1,4 @@
+flask
+numpy
+scikit-learn
+paq-0.1.tar.gz
