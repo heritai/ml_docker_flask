@@ -1,7 +1,7 @@
 #pip install flask
 from flask import Flask, jsonify, request
 
-import paq as q2
+import paq as q
 
 
 
@@ -17,15 +17,15 @@ def home():
 
 @app.route('/functions')
 def func():
-    return q2.__all__
+    return q.__all__
 
 
 def calc_wrap(problem, n_samples, n_features):
     try:
-        X, y = q2.generate(problem, n_samples, n_features)
-        stats = q2.statistics(X, y)
-        model, error = q2.learn(problem, X, y)
-        predictions = q2.predict(model, problem)
+        X, y = q.generate(problem, n_samples, n_features)
+        stats = q.statistics(X, y)
+        model, error = q.learn(problem, X, y)
+        predictions = q.predict(model, problem)
         return stats, error, predictions
     except Exception as e:
         err_txt= str(e)
