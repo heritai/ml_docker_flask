@@ -2,61 +2,55 @@
 
 This repository contains a simple Flask API that leverages the "paq" Python package (a toy ML package) for performing basic classification and regression tasks. The application is containerized using Docker for easy deployment and reproducibility.
 
-
 ## Overview
 
-This project contains the following components:
+This repository includes the following key components and structure:
 
-*   **`flsk.py`:** The main Flask application file.  It defines API endpoints for generating synthetic datasets, training simple models, and making predictions using the `paq` package.
-*   **`Dockerfile`:** Contains instructions for building a Docker image for the Flask application.  It specifies the base image, copies application files, installs dependencies, and sets the command to run the application.
-*   **`requirements.txt`:** Lists the Python packages required by the Flask application (e.g., `Flask`, `scikit-learn`, `numpy`, `paq-0.1.tar.gz`).
+*   **`flsk.py`:** The main Flask application file. It defines API endpoints for generating synthetic datasets, training simple models, and making predictions using the `paq` package.
+*   **`Dockerfile`:** Contains instructions for building a Docker image for the Flask application. It specifies the base image, copies application files, installs dependencies (including `paq`), and sets the command to run the application.
+*   **`requirements.txt`:** Lists the Python packages required by the Flask application (e.g., `Flask`, `scikit-learn`, `numpy`). Note that `paq` is installed from its local distribution file, as detailed below.
 *   **`README.md`:** This file, providing an overview of the project, instructions for building and running the application, and other relevant information.
-*   **`packaging/`:** A directory containing the custom-built `paq` Python package.  This is a crucial part of the application.  (See below for more details.)
+*   **`packaging/`:** A directory containing the custom-built `paq` Python package's source distribution (`paq-0.1.tar.gz`). This file is copied into the Docker image and installed during the build process.
 
+## The `paq` Machine Learning Package
 
+This project relies on the custom-built `paq` package, which is included in this repository as a source distribution (`paq-0.1.tar.gz`) within the `packaging/` directory. The `Dockerfile` is configured to install this package as part of the Docker image build.
 
-
-## Setting up the `paq` Package
-
-**Important:** This project relies on the `paq` package, which is included in this repository. Make sure `paq` package is structured as described above. The structure should be like that
+The `packaging/` directory structure for `paq` is typically as follows:
 
 ```
-packaging/         (Top-level package directory)
-    paq/
-        __init__.py   (Marks this directory as a Python package)
-        ml_functions.py  (Your original code)
-    setup.py      (Build and installation script)
+packaging/                 (Top-level package distribution directory)
+    paq-0.1.tar.gz         (The compressed source distribution of paq)
 ```
 
+(Inside the `paq-0.1.tar.gz` archive, you would find the package source, typically like `paq/__init__.py`, `paq/ml_functions.py`, and `setup.py`.)
 
 ## Setup and Installation
 
+Follow these steps to get the Dockerized Flask API up and running:
+
 **1. Clone the Repository:**
+
+Start by cloning the repository to your local machine:
 
 ```bash
 git clone <your_repository_url>
 cd flask-paq-app
 ```
 
-**2. Create (or have) the `paq` Python Package:**
+**2. Build the Docker Image:**
 
-Make sure that you already create the `paq` python package and install it, or copy the package inside the same repository.
-
-```
-pip install paq
-```
-
-**3. Build the Docker Image:**
-
-Navigate to the repository's root directory (where the `Dockerfile` is located) and run the following command to build the Docker image:
+Navigate to the repository's root directory (where the `Dockerfile` is located) and run the following command to build the Docker image. This process will install all necessary dependencies, including the `paq` package from the `packaging/` directory.
 
 ```bash
 docker build -t flask-paq-app .
 ```
 
-This command uses the instructions in the `Dockerfile` to create a Docker image named `flask-paq-app`.  The `.` specifies that the current directory is the build context.
+*   `docker build`: The command to build a Docker image.
+*   `-t flask-paq-app`: Tags the image with the name `flask-paq-app` (you can choose a different name).
+*   `.`: Specifies that the current directory is the build context, where the `Dockerfile` and application files are located.
 
-**4. Run the Docker Container:**
+**3. Run the Docker Container:**
 
 Once the image is built, run a Docker container from it:
 
@@ -64,11 +58,9 @@ Once the image is built, run a Docker container from it:
 docker run -p 5000:5000 flask-paq-app
 ```
 
-*   `docker run`:  The command to start a Docker container.
-*   `-p 5000:5000`:  Maps port 5000 on your host machine to port 5000 inside the container. This allows you to access the Flask API from your browser or other tools.
-*   `flask-paq-app`:  The name of the Docker image to run.
-
-
+*   `docker run`: The command to start a Docker container.
+*   `-p 5000:5000`: Maps port 5000 on your host machine to port 5000 inside the container. This allows you to access the Flask API from your host machine's browser or other tools.
+*   `flask-paq-app`: The name of the Docker image to run.
 
 ## Accessing the API (After Running the Docker Container)
 
@@ -99,7 +91,7 @@ Now that the application is running inside a Docker container, you can access th
     print(response.json())
     ```
 
-**2. Get the list of functions**
+**2. Get the List of Available Functions:**
 
 *   **Using `curl`:**
 
@@ -107,7 +99,7 @@ Now that the application is running inside a Docker container, you can access th
     curl http://localhost:5000/functions
     ```
 
-    This will return a JSON response like:
+    This will return a JSON response listing the functions exposed by the `paq` package:
 
     ```json
     [
@@ -134,7 +126,7 @@ Now that the application is running inside a Docker container, you can access th
 
 **3. Perform Classification:**
 
-To perform classification, you need to send a POST request to the `/classification/process` endpoint with the `n_samples` and `n_features` parameters in the request body.  Use `application/x-www-form-urlencoded` content type.
+To perform classification, send a POST request to the `/classification/process` endpoint with the `n_samples` and `n_features` parameters in the request body. Ensure the content type is `application/x-www-form-urlencoded`.
 
 *   **Using `curl`:**
 
@@ -142,13 +134,13 @@ To perform classification, you need to send a POST request to the `/classificati
     curl -X POST -d "n_samples=100&n_features=5" http://localhost:5000/classification/process
     ```
 
-    This will return a JSON response containing the statistics, error, and predictions:
+    This will return a JSON response containing statistics, the classification error, and predictions:
 
     ```json
     {
       "error": "0.0737",
       "predictions": "[0.07, 0.10, 0.13, 0.15, 0.2, 0.12...]",
-      "stats": "{'mean_target': '0.5', 'std_target': '0.5...}"
+      "stats": "{'mean_target': '0.5', 'std_target': '0.5'...}"
     }
     ```
 
@@ -164,7 +156,7 @@ To perform classification, you need to send a POST request to the `/classificati
 
 **4. Perform Regression:**
 
-The process for regression is similar to classification, but you send the POST request to the `/regression/process` endpoint:
+The process for regression is similar to classification, but you send the POST request to the `/regression/process` endpoint.
 
 *   **Using `curl`:**
 
@@ -184,22 +176,16 @@ The process for regression is similar to classification, but you send the POST r
 
 **Important Notes:**
 
-*   **Error Handling:** The API returns error messages in JSON format if something goes wrong (e.g., invalid parameters).  Check the `error` field in the response.
-*   **Data Types:** The API expects `n_samples` and `n_features` to be integers.  Make sure you pass the correct data types in your requests.
+*   **Error Handling:** The API returns error messages in JSON format if something goes wrong (e.g., invalid parameters). Check the `error` field in the response.
+*   **Data Types:** The API expects `n_samples` and `n_features` to be integers. Make sure you pass the correct data types in your requests.
 *   **Port:** If you changed the port mapping in the `docker run` command (e.g., `-p 8080:5000`), adjust the URL accordingly (e.g., `http://localhost:8080`).
-
-
-
-
 
 ## Key Concepts
 
-*   **Docker:** A platform for building, shipping, and running applications in containers.  Containers provide a consistent and isolated environment for your application.
-*   **Docker Compose:** A tool for defining and managing multi-container Docker applications.  It uses a YAML file (`docker-compose.yml`) to configure the application's services, networks, and volumes.
-*   **`Dockerfile`:**  A text file that contains instructions for building a Docker image.
-*   **`requirements.txt`:**  A text file that lists the Python packages required by your application.
-*   **Flask:** A micro web framework for Python.  It provides the tools and libraries you need to build web applications and APIs.
-*   **`paq`:** Our example Machine learning Package.
+*   **Docker:** A platform for building, shipping, and running applications in containers. Containers provide a consistent and isolated environment for your application.
+*   **`Dockerfile`:** A text file that contains instructions for building a Docker image.
+*   **`requirements.txt`:** A text file that lists the Python packages required by your application.
+*   **Flask:** A micro web framework for Python. It provides the tools and libraries you need to build web applications and APIs.
+*   **`paq`:** Our example machine learning package, bundled with the application.
 *   **API Endpoints:** Specific URLs in your application that handle requests and return data.
 *   **JSON (JavaScript Object Notation):** A lightweight data-interchange format that is commonly used in APIs.
-
