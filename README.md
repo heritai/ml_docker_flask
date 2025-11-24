@@ -1,22 +1,22 @@
 # 🐳 A Dockerized Flask API for Machine Learning
 
-This repository showcases a simple Flask API designed to demonstrate basic machine learning tasks using `paq`, a lightweight, toy ML Python package. The application is fully containerized with Docker, ensuring easy deployment and consistent reproducibility.
+This repository showcases a simple Flask API designed to demonstrate basic machine learning tasks using `paq`, a lightweight, toy ML Python package. The application is fully containerized with Docker, ensuring easy deployment and reproducibility.
 
 ## ✨ Overview
 
 This project is structured with the following key components:
 
 *   **`flsk.py`**: The core Flask application file, defining API endpoints for synthetic data generation, model training, and predictions using the `paq` package.
-*   **`Dockerfile`**: Contains instructions for building the Docker image for the Flask application, specifying the base image, copying application files, installing dependencies (including `paq`), and setting the command to run the application.
+*   **`Dockerfile`**: Contains instructions for building the Docker image for the Flask application. It specifies the base image, copies application files, installs dependencies (including `paq`), and sets the command to run the application.
 *   **`requirements.txt`**: Lists the Python packages required by the Flask application (e.g., `Flask`, `scikit-learn`, `numpy`). Note: `paq` is installed from its local source distribution, as detailed below.
-*   **`README.md`**: This file, providing a comprehensive overview of the project, setup instructions, and API usage examples.
+*   **`README.md`**: This file, offering a comprehensive overview of the project, setup instructions, and API usage examples.
 *   **`packaging/`**: A directory containing the custom-built `paq` Python package's source distribution (`paq-0.1.tar.gz`). This file is copied into the Docker image and installed during the build process.
 
 ## 📦 The `paq` Machine Learning Package
 
-This project relies on the custom `paq` package, included in this repository as a source distribution (`paq-0.1.tar.gz`) within the `packaging/` directory. The `Dockerfile` is configured to install this package during the Docker image build process.
+This project relies on the custom `paq` package, which is included in this repository as a source distribution (`paq-0.1.tar.gz`) within the `packaging/` directory. The `Dockerfile` is configured to install this package during the Docker image build process.
 
-The `packaging/` directory should contain the compressed source distribution as follows:
+The `packaging/` directory is expected to contain the compressed source distribution as follows:
 
 ```
 packaging/
@@ -43,6 +43,8 @@ Begin by cloning the repository to your local machine:
 git clone <your_repository_url>
 cd flask-paq-app
 ```
+
+*   *Remember to replace `<your_repository_url>` with the actual URL of this repository.*
 
 **2. Build the Docker Image:**
 
@@ -109,7 +111,7 @@ Retrieve a list of the machine learning functions exposed by the `paq` package.
     curl http://localhost:5000/functions
     ```
 
-    Expected JSON response (may vary slightly based on `paq` version):
+    Expected JSON response (actual values may vary based on `paq` version):
 
     ```json
     [
@@ -136,7 +138,7 @@ Retrieve a list of the machine learning functions exposed by the `paq` package.
 
 ### 3. Perform Classification (`/classification/process`)
 
-Send a POST request to perform a classification task. Include `n_samples` and `n_features` in the request body; ensure the content type is `application/x-www-form-urlencoded`.
+Send a POST request to perform a classification task. Include `n_samples` and `n_features` in the request body, ensuring the content type is `application/x-www-form-urlencoded`.
 
 *   **Using `curl`:**
 
@@ -144,7 +146,7 @@ Send a POST request to perform a classification task. Include `n_samples` and `n
     curl -X POST -d "n_samples=100&n_features=5" http://localhost:5000/classification/process
     ```
 
-    Expected JSON response (values will vary):
+    Expected JSON response (actual values will vary):
 
     ```json
     {
@@ -172,6 +174,16 @@ Similar to classification, send a POST request to the `/regression/process` endp
 
     ```bash
     curl -X POST -d "n_samples=100&n_features=5" http://localhost:5000/regression/process
+    ```
+
+    Expected JSON response (similar to classification, actual values will vary):
+
+    ```json
+    {
+      "error": "0.0512",
+      "predictions": "[0.52, 0.61, 0.70, 0.45, 0.88, 0.33...]",
+      "stats": "{'mean_target': '10.2', 'std_target': '2.1'...}"
+    }
     ```
 
 *   **Using Python `requests`:**
