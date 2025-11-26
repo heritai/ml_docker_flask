@@ -1,62 +1,62 @@
 # 🐳 A Dockerized Flask API for Machine Learning
 
-This repository showcases a simple Flask API designed to demonstrate basic machine learning tasks using `paq`, a lightweight, toy ML Python package. The application is fully containerized with Docker, ensuring easy deployment and reproducibility.
+This repository presents a simple Flask API for demonstrating basic machine learning tasks using `paq`, a lightweight, toy-grade ML Python package. It is fully containerized with Docker, ensuring easy deployment and reproducibility.
 
 ## ✨ Overview
 
-This project is structured with the following key components:
+The project structure includes the following key components:
 
-*   **`flsk.py`**: The core Flask application file, defining API endpoints for synthetic data generation, model training, and predictions using the `paq` package.
-*   **`Dockerfile`**: Contains instructions for building the Docker image for the Flask application. It specifies the base image, copies application files, installs dependencies (including `paq`), and sets the command to run the application.
-*   **`requirements.txt`**: Lists the Python packages required by the Flask application (e.g., `Flask`, `scikit-learn`, `numpy`). Note: `paq` is installed from its local source distribution, as detailed below.
-*   **`README.md`**: This file, offering a comprehensive overview of the project, setup instructions, and API usage examples.
-*   **`packaging/`**: A directory containing the custom-built `paq` Python package's source distribution (`paq-0.1.tar.gz`). This file is copied into the Docker image and installed during the build process.
+*   **`flsk.py`**: The core Flask application file, defining API endpoints for synthetic data generation, model training, and predictions, leveraging the `paq` package.
+*   **`Dockerfile`**: Instructions for building the Docker image, specifying the base image, copying application files, installing dependencies (including `paq`), and setting the application's run command.
+*   **`requirements.txt`**: Lists Python package dependencies for the Flask application (e.g., `Flask`, `scikit-learn`, `numpy`). *Note: `paq` is installed from its local source distribution, as detailed below.*
+*   **`README.md`**: This file, providing a comprehensive overview, setup instructions, and API usage examples.
+*   **`packaging/`**: Directory containing the custom-built `paq` Python package's source distribution (`paq-0.1.tar.gz`). This archive is copied into the Docker image and installed during the build process.
 
 ## 📦 The `paq` Machine Learning Package
 
-This project relies on the custom `paq` package, which is included in this repository as a source distribution (`paq-0.1.tar.gz`) within the `packaging/` directory. The `Dockerfile` is configured to install this package during the Docker image build process.
+The project incorporates the custom `paq` package, provided as a source distribution (`paq-0.1.tar.gz`) within the `packaging/` directory. The `Dockerfile` is configured to install this package during the image build process.
 
-The `packaging/` directory is expected to contain the compressed source distribution as follows:
+The `packaging/` directory should contain the compressed source distribution as follows:
 
 ```
 packaging/
     paq-0.1.tar.gz
 ```
 
-*(The `paq-0.1.tar.gz` archive itself contains the package source, typically structured with `paq/__init__.py`, `paq/ml_functions.py`, and `setup.py`.)*
+*(The `paq-0.1.tar.gz` archive typically contains the package source, structured with files like `paq/__init__.py`, `paq/ml_functions.py`, and `setup.py`.)*
 
 ## 🚀 Setup and Installation
 
-Follow these steps to get the Dockerized Flask API up and running locally.
+Follow these steps to set up and run the Dockerized Flask API locally.
 
 ### Prerequisites
 
-Ensure you have [Docker](https://docs.docker.com/get-docker/) installed on your machine.
+Ensure [Docker](https://docs.docker.com/get-docker/) is installed on your machine.
 
 ### Steps
 
 **1. Clone the Repository:**
 
-Begin by cloning the repository to your local machine:
+First, clone the repository to your local machine:
 
 ```bash
 git clone <your_repository_url>
 cd flask-paq-app
 ```
 
-*   *Remember to replace `<your_repository_url>` with the actual URL of this repository.*
+*   *Replace `<your_repository_url>` with the actual URL of this repository.*
 
 **2. Build the Docker Image:**
 
-Navigate to the repository's root directory (where the `Dockerfile` is located) and execute the following command to build the Docker image. This process will install all necessary dependencies, including the `paq` package from the `packaging/` directory.
+From the repository's root directory (where `Dockerfile` is located), build the Docker image. This step installs all necessary dependencies, including the `paq` package from the `packaging/` directory.
 
 ```bash
 docker build -t flask-paq-app .
 ```
 
 *   `docker build`: The command to build a Docker image.
-*   `-t flask-paq-app`: Tags the image with the name `flask-paq-app` (you can choose a different name).
-*   `.`: Specifies that the current directory is the build context, where the `Dockerfile` and application files are located.
+*   `-t flask-paq-app`: Tags the image with the specified name (`flask-paq-app`); you can choose a different name.
+*   `.`: Specifies the current directory (`.`) as the build context, where the `Dockerfile` and application files are located.
 
 **3. Run the Docker Container:**
 
@@ -72,11 +72,11 @@ docker run -p 5000:5000 flask-paq-app
 
 ## 📡 Accessing the API
 
-With the application now running inside a Docker container, you can access its API endpoints. Below are examples using `curl` (a command-line HTTP client) and Python's `requests` library.
+With the application running in a Docker container, you can access its API endpoints using `curl` (a command-line HTTP client) or Python's `requests` library, as demonstrated below.
 
 ### 1. Welcome Message (`/`)
 
-Retrieve a simple welcome message to confirm the API is running.
+Retrieve a welcome message to confirm the API is operational.
 
 *   **Using `curl`:**
 
@@ -103,7 +103,7 @@ Retrieve a simple welcome message to confirm the API is running.
 
 ### 2. List Available Functions (`/functions`)
 
-Retrieve a list of the machine learning functions exposed by the `paq` package.
+Retrieve a list of machine learning functions exposed by the `paq` package.
 
 *   **Using `curl`:**
 
@@ -200,16 +200,16 @@ Similar to classification, send a POST request to the `/regression/process` endp
 
 ### ⚠️ Important Notes:
 
-*   **Error Handling:** The API provides error messages in JSON format for issues like invalid parameters. Always check the `error` field in the response for details.
-*   **Data Types:** The API expects `n_samples` and `n_features` to be integers. Ensure correct data types are passed in your requests.
+*   **Error Handling:** The API returns error messages in JSON format for issues such as invalid parameters. Always check the `error` field in the response for details.
+*   **Data Types:** The API expects `n_samples` and `n_features` to be integers. Ensure these parameters are correctly typed in your requests.
 *   **Port Mapping:** If you modified the port mapping in the `docker run` command (e.g., `-p 8080:5000`), adjust the API URL accordingly (e.g., `http://localhost:8080`).
 
 ## 🧠 Key Concepts
 
-*   **Docker:** A platform for developing, shipping, and running applications in isolated environments called containers, ensuring consistency across various environments.
-*   **`Dockerfile`:** A script containing a series of instructions for Docker to automatically build a container image.
+*   **Docker:** A platform for developing, shipping, and running applications within isolated environments (containers), ensuring consistency across various setups.
+*   **`Dockerfile`:** A script containing instructions for Docker to automatically build a container image.
 *   **`requirements.txt`:** A standard file listing Python package dependencies for a project.
-*   **Flask:** A lightweight and flexible Python micro web framework used for building web applications and APIs.
+*   **Flask:** A lightweight and flexible Python micro web framework for building web applications and APIs.
 *   **`paq`:** The custom, example machine learning package bundled with this application.
-*   **API Endpoints:** Specific URLs in an API that handle requests and return structured data.
-*   **JSON (JavaScript Object Notation):** A human-readable data format widely used for data exchange between a server and a web application.
+*   **API Endpoints:** Specific URLs within an API that handle requests and return structured data.
+*   **JSON (JavaScript Object Notation):** A human-readable data format widely used for data exchange between servers and web applications.
